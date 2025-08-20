@@ -7,4 +7,7 @@ Aplicación móvil multiplataforma para registrar los signos vitales de los usua
 
 > [!NOTE]
 > Esta es una app demostración para el reto técnico de ROMI Asistente Médico Virtual
+>> La mejor forma de ver el progreso de creación es a través de este pequeño metodo de administración
+>>
+>> https://www.notion.so/luisgamas/Pulso-Vital-25361b729053800aafe8f20be8b07380?source=copy_link
 

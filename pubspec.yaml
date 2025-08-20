@@ -36,6 +36,7 @@ dependencies:
   go_router: ^16.2.0
   isar: ^3.1.0+1
   isar_flutter_libs: ^3.1.0+1
+  path_provider: ^2.1.5
   riverpod_annotation: ^2.6.1
 
 dev_dependencies:
@@ -49,8 +50,6 @@ dev_dependencies:
   isar_generator: ^3.1.0+1
   riverpod_generator: ^2.3.3
   riverpod_lint: ^2.1.1
-  # riverpod_generator: ^2.6.5
-  # riverpod_lint: ^2.6.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -76,9 +75,9 @@ flutter:
   # example:
   # flutter:
   fonts:
-   - family: rippleIcons
-     fonts:
-      - asset: fonts/rippleIcons.ttf
+    - family: rippleIcons
+      fonts:
+        - asset: fonts/rippleIcons.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro
