@@ -27,16 +27,10 @@ class LocalDataSourcesImpl extends DataSources {
     try {
       final isarDb = await localDb;
       final user = await isarDb.userEntitys.where().findFirst();
-      if (user != null) {
-        return (user);
-      } else {
-        return (
-          UserEntity(
-            name: 'Unknown User',
-            years: 0
-          )
-        );
-      }
+      return user ?? UserEntity(
+        name: 'Unknown User',
+        years: 0
+      );
     } catch (e) {
       throw Exception('Error getting user data');
     }

@@ -5,22 +5,26 @@ import 'package:pulso_vital/modules/dashboard/presentation/providers/dash_reposi
 class UserDataState {
   final UserEntity userEntity;
   final bool isLoading;
+  final bool isRegistered;
   final String message;
 
   UserDataState({
     required this.userEntity,
     this.isLoading = true,
+    this.isRegistered = false,
     this.message = '',
   });
 
   UserDataState copyWith({
     UserEntity? userEntity,
     bool? isLoading,
+    bool? isRegistered,
     String? message,
   }) {
     return UserDataState(
       userEntity: userEntity ?? this.userEntity,
       isLoading: isLoading ?? this.isLoading,
+      isRegistered: isRegistered ?? this.isRegistered,
       message: message ?? this.message,
     );
   }
@@ -34,7 +38,7 @@ class UserDataNotifier extends StateNotifier<UserDataState> {
   }) : super(UserDataState(
     userEntity: UserEntity(
       name: 'Usuario anónimo',
-      years: 00,
+      years: 0,
     )
   )) {
     _initialize();
@@ -42,7 +46,7 @@ class UserDataNotifier extends StateNotifier<UserDataState> {
 
   // Initialize the state if needed
   void _initialize() {
-    if(!state.isLoading) return;
+    if(state.isRegistered) return;
     getLocalUserData();
   }
 
@@ -55,6 +59,7 @@ class UserDataNotifier extends StateNotifier<UserDataState> {
       state = state.copyWith(
         userEntity: user,
         isLoading: false,
+        isRegistered: user.years != 0 ? true : false
       );
       
     } catch (e) {
@@ -72,6 +77,7 @@ class UserDataNotifier extends StateNotifier<UserDataState> {
           userEntity: user,
           isLoading: false,
           message: 'User data updated successfully',
+          isRegistered: user.years != 0 ? true : false
         );
         return true;
       } else {
@@ -89,6 +95,7 @@ class UserDataNotifier extends StateNotifier<UserDataState> {
     state = state.copyWith(
       isLoading: false,
       message: message,
+      isRegistered: false,
     );
   }
 }

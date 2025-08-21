@@ -10,8 +10,8 @@ void main() {
     // For widgets to be able to read providers, we need to wrap the entire
     // application in a "ProviderScope" widget.
     // This is where the state of our providers will be stored.
-    ProviderScope(
-      child: const MyApp()
+    const ProviderScope(
+      child: MyApp()
     )
   );
 }
@@ -27,8 +27,8 @@ class MyApp extends ConsumerWidget  {
     return MaterialApp.router(
       routerConfig: appRouter,
       themeMode: ThemeMode.system,
-      theme: AppTheme(primaryColor: Colors.purpleAccent).getLightTheme(),
-      darkTheme: AppTheme(primaryColor: Colors.purpleAccent).getDarkTheme(),
+      theme: AppTheme(primaryColor: const Color(0xFF8F3953)).getLightTheme(),
+      darkTheme: AppTheme(primaryColor: const Color(0xFF8F3953)).getDarkTheme(),
     );
   }
 }
