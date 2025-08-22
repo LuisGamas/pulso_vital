@@ -2,10 +2,14 @@
 import 'package:formz/formz.dart';
 
 // Define input validation errors
-enum NameError { empty }
+enum NameError { empty, format }
 
 // Extend FormzInput and provide the input type and error type.
 class NameValidator extends FormzInput<String, NameError> {
+
+  static final RegExp nameRegExp = RegExp(
+    r'^[a-zA-Z\s]+$',
+  );
 
   // Call super.pure to represent an unmodified form input.
   const NameValidator.pure() : super.pure('');
@@ -17,6 +21,7 @@ class NameValidator extends FormzInput<String, NameError> {
     if (isValid || isPure) return null;
 
     if (displayError == NameError.empty) return 'El campo es requerido';
+    if (displayError == NameError.format) return 'Por favor ingresa un nombre válido';
 
     return null;
   }
@@ -25,6 +30,7 @@ class NameValidator extends FormzInput<String, NameError> {
   @override
   NameError? validator(String value) {
     if (value.isEmpty || value.trim().isEmpty) return NameError.empty;
+    if (!nameRegExp.hasMatch(value)) return NameError.format;
 
     return null;
   }

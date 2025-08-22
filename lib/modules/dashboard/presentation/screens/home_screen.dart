@@ -157,6 +157,12 @@ class _RequestRegistrationDialog extends ConsumerWidget {
     final userRegistrationForm = ref.watch(userRegistrationFormProvider);
     final appRouter = ref.watch(goRouterProvider);
 
+    ref.listen(userDataProvider, (previous, next) {
+      if (next.isRegistered) {
+        appRouter.pop();
+      }
+    });
+
     return AlertDialog(
       scrollable: true,
       backgroundColor: colors.surfaceContainer,
@@ -166,7 +172,6 @@ class _RequestRegistrationDialog extends ConsumerWidget {
         FilledButton(
           onPressed: () {
             ref.read(userRegistrationFormProvider.notifier).onFormSubmit();
-            appRouter.pop();
           },
           child: const Text('Registrar')
         ),

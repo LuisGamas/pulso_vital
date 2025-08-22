@@ -44,7 +44,7 @@ class UserRegistrationFormNotifier extends StateNotifier<UserRegistrationFormSta
   }) : super(UserRegistrationFormState());
 
   onNameChanged(String value) {
-    final newName = NameValidator.dirty(value);
+    final newName = NameValidator.dirty(value.trim());
     state = state.copyWith(
       name: newName,
       isValid: Formz.validate([newName, state.years])
@@ -52,7 +52,7 @@ class UserRegistrationFormNotifier extends StateNotifier<UserRegistrationFormSta
   }
 
   onYearsChanged(String value) {
-    final newYears = YearsValidator.dirty(value);
+    final newYears = YearsValidator.dirty(value.trim());
     state = state.copyWith(
       years: newYears,
       isValid: Formz.validate([state.name, newYears])
@@ -83,8 +83,8 @@ class UserRegistrationFormNotifier extends StateNotifier<UserRegistrationFormSta
   }
 
   _touchEveryField() {
-    final name = NameValidator.dirty(state.name.value);
-    final years = YearsValidator.dirty(state.years.value);
+    final name = NameValidator.dirty(state.name.value.trim());
+    final years = YearsValidator.dirty(state.years.value.trim());
 
     state = state.copyWith(
       isFormPosted: true,
