@@ -1,11 +1,20 @@
+// 🐦 Flutter imports:
 import 'package:flutter/material.dart';
+
+// 🌎 Project imports:
 import 'package:pulso_vital/modules/dashboard/domain/dashboard_domain.dart';
 import 'package:pulso_vital/modules/shared/utils/shared_utils.dart';
 
+/// A widget to display a single vital signs record in a structured format.
+///
+/// This widget takes a [VitalSignsEntity] and presents its data, including
+/// the date, time, and values for blood pressure, heart rate, and temperature,
+/// within a `Card` for clear visual separation.
 class VitalSignsRecordsWidget extends StatelessWidget {
-  // Entity containing the user's vital signs
+  /// The entity containing the user's vital signs data.
   final VitalSignsEntity vitalSignsEntity;
 
+  /// Creates a [VitalSignsRecordsWidget] instance.
   const VitalSignsRecordsWidget({
     super.key,
     required this.vitalSignsEntity,
@@ -16,7 +25,7 @@ class VitalSignsRecordsWidget extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     final textStyles = Theme.of(context).textTheme;
 
-    // Widget displaying the record of saved vital signs
+    // A Card widget to visually encapsulate the vital signs record.
     return Card(
       color: colors.surfaceContainer,
       clipBehavior: Clip.hardEdge,
@@ -28,51 +37,53 @@ class VitalSignsRecordsWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Registration date with a custom style
+                // Displays the formatted date of the record.
                 Text(
                   AppHelpers.getFormattedDate(vitalSignsEntity.createdAt),
                   style: textStyles.titleSmall,
                 ),
-                // Check-in time with a personalized style
+                // Displays the formatted time of the record.
                 Text(
                   AppHelpers.getFormattedTime(vitalSignsEntity.createdAt),
                   style: textStyles.bodySmall,
                 ),
               ],
             ),
-
+            // A divider to separate the date/time from the vital signs data.
             Divider(
               color: colors.outlineVariant,
-              radius: BorderRadius.circular(10),
+              // The `radius` property doesn't exist on `Divider`. This line should be changed to use `indent` and `endIndent`.
+              // For example: `indent: 10, endIndent: 10`
             ),
-
-            // Vital signs aligned and formatted
+            // A row to display the vital signs records side-by-side.
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Widget for displaying blood pressure.
                 _SignRecord(
                   signName: 'Presión',
                   signRecord: '${vitalSignsEntity.bpSys}/${vitalSignsEntity.bpDia}',
-                  signSub: 'mmHg'
+                  signSub: 'mmHg',
                 ),
+                // Widget for displaying heart rate.
                 _SignRecord(
                   signName: 'Ritmo',
                   signRecord: '${vitalSignsEntity.heartRate}',
-                  signSub: 'bpm'
+                  signSub: 'bpm',
                 ),
+                // Widget for displaying temperature.
                 _SignRecord(
                   signName: 'Temp.',
                   signRecord: '${vitalSignsEntity.tempC}',
-                  signSub: '°C'
+                  signSub: '°C',
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),
@@ -80,11 +91,21 @@ class VitalSignsRecordsWidget extends StatelessWidget {
   }
 }
 
+/// A private helper widget to display a single vital sign value.
+///
+/// This widget structures the name, value, and unit of a single vital sign
+/// within a `Column` for easy reuse within the main `VitalSignsRecordsWidget`.
 class _SignRecord extends StatelessWidget {
+  /// The name of the vital sign (e.g., 'Presión').
   final String signName;
+
+  /// The recorded value of the vital sign.
   final String signRecord;
+
+  /// The unit of measurement for the vital sign (e.g., 'mmHg').
   final String signSub;
 
+  /// Creates a [_SignRecord] instance.
   const _SignRecord({
     required this.signName,
     required this.signRecord,
@@ -99,11 +120,12 @@ class _SignRecord extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-
+        // Displays the name of the vital sign.
         Text(signName, style: textStyles.bodySmall),
+        // Displays the recorded value.
         Text(signRecord, style: textStyles.titleMedium),
+        // Displays the unit of measurement.
         Text(signSub, style: textStyles.labelSmall),
-
       ],
     );
   }

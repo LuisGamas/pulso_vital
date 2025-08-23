@@ -5,13 +5,22 @@
 //    - family: rippleIcons
 //      fonts:
 //       - asset: fonts/rippleIcons.ttf
+
+// 🐦 Flutter imports:
 import 'package:flutter/widgets.dart';
 
+/// A class that provides a set of custom icons.
+///
+/// This class uses a custom font family to deliver a collection of icons
+/// that can be used throughout the application. The private constructor
+/// prevents instantiation of this class.
 class RippleIcons {
   RippleIcons._();
 
+  /// The font family name used for these icons.
   static const String _fontFamily = 'rippleIcons';
 
+  /// A list of custom icon data.
   static const IconData appleSocialFilled = IconData(0xeb38, fontFamily: _fontFamily);
   static const IconData discordSocialFilled = IconData(0xeb39, fontFamily: _fontFamily);
   static const IconData facebookSocialFilled = IconData(0xeb3a, fontFamily: _fontFamily);
