@@ -14,7 +14,7 @@ class LocalDataSourcesImpl extends DataSources {
 
     if (Isar.instanceNames.isEmpty) {
       return await Isar.open(
-        [UserEntitySchema],
+        [UserEntitySchema, VitalSignsEntitySchema],
         inspector: true,
         directory: dir.path,
       );
@@ -44,6 +44,29 @@ class LocalDataSourcesImpl extends DataSources {
       return true;
     } catch (e) {
       // throw Exception('Error updating user data');
+      return false;
+    }
+  }
+  
+  @override
+  Future<List<VitalSignsEntity>> getVitalSignsRecords() async {
+    try {
+      final isarDb = await localDb;
+      return await isarDb.vitalSignsEntitys.where(sort: Sort.desc).findAll();      
+    } catch (e) {
+      // throw Exception('Error retrieving vital signs records: $e');
+      return [];
+    }
+  }
+  
+  @override
+  Future<bool> updateVitalSigns(VitalSignsEntity vitalSign) async {
+    try {
+      final isarDb = await localDb;
+      await isarDb.writeTxn(() async => isarDb.vitalSignsEntitys.put(vitalSign));
+      return true;
+    } catch (e) {
+      // throw Exception('Error retrieving user\'s vital signs');
       return false;
     }
   }

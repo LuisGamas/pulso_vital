@@ -8,23 +8,23 @@ class UserRegistrationFormState {
   final bool isPosting;
   final bool isFormPosted;
   final bool isValid;
-  final NameValidator name;
-  final YearsValidator years;
+  final TextFormzValidator name;
+  final IntegerFormzValidator years;
 
   UserRegistrationFormState({
     this.isPosting = false,
     this.isFormPosted = false,
     this.isValid = false,
-    this.name = const NameValidator.pure(),
-    this.years = const YearsValidator.pure(),
+    this.name = const TextFormzValidator.pure(),
+    this.years = const IntegerFormzValidator.pure(),
   });
 
   UserRegistrationFormState copyWith({
     bool? isPosting,
     bool? isFormPosted,
     bool? isValid,
-    NameValidator? name,
-    YearsValidator? years,
+    TextFormzValidator? name,
+    IntegerFormzValidator? years,
   }) => UserRegistrationFormState(
     isPosting: isPosting ?? this.isPosting,
     isFormPosted: isFormPosted ?? this.isFormPosted,
@@ -44,7 +44,7 @@ class UserRegistrationFormNotifier extends StateNotifier<UserRegistrationFormSta
   }) : super(UserRegistrationFormState());
 
   onNameChanged(String value) {
-    final newName = NameValidator.dirty(value.trim());
+    final newName = TextFormzValidator.dirty(value.trim());
     state = state.copyWith(
       name: newName,
       isValid: Formz.validate([newName, state.years])
@@ -52,7 +52,7 @@ class UserRegistrationFormNotifier extends StateNotifier<UserRegistrationFormSta
   }
 
   onYearsChanged(String value) {
-    final newYears = YearsValidator.dirty(value.trim());
+    final newYears = IntegerFormzValidator.dirty(value.trim());
     state = state.copyWith(
       years: newYears,
       isValid: Formz.validate([state.name, newYears])
@@ -83,8 +83,8 @@ class UserRegistrationFormNotifier extends StateNotifier<UserRegistrationFormSta
   }
 
   _touchEveryField() {
-    final name = NameValidator.dirty(state.name.value.trim());
-    final years = YearsValidator.dirty(state.years.value.trim());
+    final name = TextFormzValidator.dirty(state.name.value.trim());
+    final years = IntegerFormzValidator.dirty(state.years.value.trim());
 
     state = state.copyWith(
       isFormPosted: true,

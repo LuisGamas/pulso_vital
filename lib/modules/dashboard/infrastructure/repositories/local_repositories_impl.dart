@@ -14,5 +14,15 @@ class LocalRepositoriesImpl extends Repositories {
   Future<bool> updateUserData(UserEntity user) {
     return dataSources.updateUserData(user);
   }
+  
+  @override
+  Future<List<VitalSignsEntity>> getVitalSignsRecords() {
+    return dataSources.getVitalSignsRecords();
+  }
+  
+  @override
+  Future<bool> updateVitalSigns(VitalSignsEntity vitalSign) {
+    return dataSources.updateVitalSigns(vitalSign);
+  }
 
 }

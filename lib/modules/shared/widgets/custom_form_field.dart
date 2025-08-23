@@ -1,6 +1,7 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
+// Custom widget to display a text field
 class CustomFormField extends StatelessWidget {
   final String? label;
   final String? hint;
@@ -9,6 +10,7 @@ class CustomFormField extends StatelessWidget {
   final IconData? leftIcon;
   final Function(String)? onChanged;
   final String? Function(String?)? validator;
+  final TextInputType? keyboardType;
 
   const CustomFormField({
     super.key,
@@ -19,6 +21,7 @@ class CustomFormField extends StatelessWidget {
     this.leftIcon,
     this.onChanged,
     this.validator,
+    this.keyboardType,
   });
 
   @override
@@ -33,6 +36,7 @@ class CustomFormField extends StatelessWidget {
       onChanged: onChanged,
       validator: validator,
       enabled: enabled,
+      keyboardType: keyboardType,
       decoration: InputDecoration(
         label: label != null ? Text(label!) : null,
         hintText: hint,
