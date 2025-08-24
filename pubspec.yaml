@@ -28,6 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  carousel_slider: ^5.1.1
   cupertino_icons: ^1.0.8
   flutter:
     sdk: flutter
@@ -38,6 +39,7 @@ dependencies:
   intl: ^0.20.2
   isar: ^3.1.0+1
   isar_flutter_libs: ^3.1.0+1
+  material_charts: ^0.0.30
   path_provider: ^2.1.5
   riverpod_annotation: ^2.6.1
 

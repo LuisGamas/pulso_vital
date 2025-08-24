@@ -34,4 +34,18 @@ class AppHelpers {
     final formatter = DateFormat.jm();
     return formatter.format(date);
   }
+
+  /// Formats a given [DateTime] object into a shortened date string for charts.
+  ///
+  /// The date is formatted as 'day/month abbreviation' (e.g., '22/ago').
+  /// This is useful for displaying concise labels on charts.
+  ///
+  /// - Parameters:
+  ///   - [date]: The `DateTime` object to format.
+  /// - Returns: A formatted date string.
+  static String getChartDateLabel(DateTime date) {
+    initializeDateFormatting('es_MX', null);
+    final formatter = DateFormat('dd/MMM', 'es_MX');
+    return formatter.format(date);
+  }
 }
