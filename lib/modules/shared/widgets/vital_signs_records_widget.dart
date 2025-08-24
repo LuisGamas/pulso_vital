@@ -1,8 +1,13 @@
 // 🐦 Flutter imports:
 import 'package:flutter/material.dart';
 
+// 📦 Package imports:
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 // 🌎 Project imports:
+import 'package:pulso_vital/config/config.dart';
 import 'package:pulso_vital/modules/dashboard/domain/dashboard_domain.dart';
+import 'package:pulso_vital/modules/dashboard/presentation/providers/dashboard_providers.dart';
 import 'package:pulso_vital/modules/shared/utils/shared_utils.dart';
 
 /// A widget to display a single vital signs record in a structured format.
@@ -10,7 +15,7 @@ import 'package:pulso_vital/modules/shared/utils/shared_utils.dart';
 /// This widget takes a [VitalSignsEntity] and presents its data, including
 /// the date, time, and values for blood pressure, heart rate, and temperature,
 /// within a `Card` for clear visual separation.
-class VitalSignsRecordsWidget extends StatelessWidget {
+class VitalSignsRecordsWidget extends ConsumerWidget {
   /// The entity containing the user's vital signs data.
   final VitalSignsEntity vitalSignsEntity;
 
@@ -21,7 +26,7 @@ class VitalSignsRecordsWidget extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = Theme.of(context).colorScheme;
     final textStyles = Theme.of(context).textTheme;
 
@@ -31,7 +36,7 @@ class VitalSignsRecordsWidget extends StatelessWidget {
       clipBehavior: Clip.hardEdge,
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,7 +44,7 @@ class VitalSignsRecordsWidget extends StatelessWidget {
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 // Displays the formatted date of the record.
                 Text(
@@ -50,6 +55,24 @@ class VitalSignsRecordsWidget extends StatelessWidget {
                 Text(
                   AppHelpers.getFormattedTime(vitalSignsEntity.createdAt),
                   style: textStyles.bodySmall,
+                ),
+                // Botón para eliminar el registro o tarjeta
+                Material(
+                  color: colors.surfaceContainer,
+                  borderRadius: BorderRadius.circular(12),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(12),
+                    splashColor: colors.errorContainer,
+                    child: SizedBox(
+                      height: 36,
+                      width: 36,
+                      child: Icon(
+                        RippleIcons.trashOutline,
+                        color: colors.error,
+                      ),
+                    ),
+                    onTap: () => ref.read(vitalSignsRecordProvider.notifier).deleteVitalSigns(vitalSignsEntity.isarId),
+                  )
                 ),
               ],
             ),

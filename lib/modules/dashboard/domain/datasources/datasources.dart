@@ -1,3 +1,6 @@
+// 📦 Package imports:
+import 'package:isar/isar.dart';
+
 // 🌎 Project imports:
 import 'package:pulso_vital/modules/dashboard/domain/dashboard_domain.dart';
 
@@ -34,4 +37,11 @@ abstract class DataSources {
   /// corresponding record in the data source. It returns a `Future<bool>`
   /// indicating whether the update was successful.
   Future<bool> updateVitalSigns(VitalSignsEntity vitalSign);
+
+  /// Deletes a vital signs record by its unique ID.
+  ///
+  /// This method takes an `Id` (Isar's primary key type) and removes the
+  /// corresponding vital signs record from the data source. It returns
+  /// `Future<bool>` indicating whether the deletion was successful.
+  Future<bool> deleteVitalSigns(Id vitalSignId);
 }

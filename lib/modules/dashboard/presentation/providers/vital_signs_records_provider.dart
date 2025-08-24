@@ -1,5 +1,6 @@
 // 📦 Package imports:
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:isar/isar.dart';
 
 // 🌎 Project imports:
 import 'package:pulso_vital/modules/dashboard/domain/dashboard_domain.dart';
@@ -116,6 +117,31 @@ class ViatlSignsRecordsNotifier extends StateNotifier<VitalSignsRecordsState> {
     } catch (e) {
       errorFunction('Error updating user\'s vital signs');
       return false;
+    }
+  }
+
+  /// Deletes a vital signs record by its ID.
+  ///
+  /// This method uses the repository to delete a record, updates the state
+  /// by removing the deleted record from the list, and provides a success
+  /// message. If the deletion fails, it updates the state with an error.
+  Future<void> deleteVitalSigns(Id vitalSignId) async {
+    try {
+      state = state.copyWith(isLoading: true);
+      final success = await repositories.deleteVitalSigns(vitalSignId);
+      if (success) {
+        final updatedList = await repositories.getVitalSignsRecords();
+        
+        state = state.copyWith(
+          isLoading: false,
+          vitalSignsEntity: updatedList,
+          message: 'Vital signs record successfully deleted!',
+        );
+      } else {
+        errorFunction('Error deleting vital signs record');
+      }
+    } catch (e) {
+      errorFunction('Error deleting vital signs record');
     }
   }
 

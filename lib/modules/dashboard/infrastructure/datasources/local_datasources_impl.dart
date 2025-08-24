@@ -107,4 +107,19 @@ class LocalDataSourcesImpl extends DataSources {
       return false;
     }
   }
+
+  @override
+  Future<bool> deleteVitalSigns(Id vitalSignId) async {
+    try {
+      final isarDb = await localDb;
+      // Use a write transaction to safely delete the vital signs record.
+      final success = await isarDb.writeTxn(() async {
+        return await isarDb.vitalSignsEntitys.delete(vitalSignId);
+      });
+      return success;
+    } catch (e) {
+      // Return `false` on failure.
+      return false;
+    }
+  }
 }

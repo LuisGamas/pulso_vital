@@ -1,3 +1,6 @@
+// 📦 Package imports:
+import 'package:isar/isar.dart';
+
 // 🌎 Project imports:
 import 'package:pulso_vital/modules/dashboard/domain/dashboard_domain.dart';
 
@@ -55,5 +58,14 @@ class LocalRepositoriesImpl extends Repositories {
   @override
   Future<bool> updateVitalSigns(VitalSignsEntity vitalSign) {
     return dataSources.updateVitalSigns(vitalSign);
+  }
+
+  /// Deletes a single vital signs record from the local data source.
+  ///
+  /// This method forwards the vital signs update request to the `deleteVitalSigns`
+  /// method of the injected [dataSources] instance.
+  @override
+  Future<bool> deleteVitalSigns(Id vitalSignId) {
+    return dataSources.deleteVitalSigns(vitalSignId);
   }
 }
