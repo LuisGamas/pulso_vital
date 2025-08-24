@@ -84,7 +84,7 @@ class LocalDataSourcesImpl extends DataSources {
     try {
       final isarDb = await localDb;
       // Retrieve all vital signs records and sort them in descending order.
-      return await isarDb.vitalSignsEntitys.where(sort: Sort.desc).findAll();
+      return await isarDb.vitalSignsEntitys.where().sortByCreatedAtDesc().findAll();
     } catch (e) {
       // Return an empty list on failure to prevent app crashes.
       // The commented `throw` can be used for more detailed error handling.

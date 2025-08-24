@@ -93,6 +93,7 @@ class VitalSignsChartNotifier extends StateNotifier<VitalSignsChartState> {
     }
 
     // Mapps the data for each vital sign into a list of `ChartDataPoint`.
+    vitalSigns.sort((a, b) => a.isarId.compareTo(b.isarId));
     final List<ChartDataPoint> bpSysData = [];
     final List<ChartDataPoint> bpDiaData = [];
     final List<ChartDataPoint> heartRateData = [];
