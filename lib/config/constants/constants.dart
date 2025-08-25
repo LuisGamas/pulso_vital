@@ -4,5 +4,5 @@
 /// as they are used throughout the application to ensure consistency and prevent errors.
 class Constants {
   /// Path to the first profile image.
-  static const String imageProfile1 = 'assets/images/axolote.jpg';
+  static const String imageProfile1 = 'assets/images/axolote.png';
 }
