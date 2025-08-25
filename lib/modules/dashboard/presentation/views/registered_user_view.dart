@@ -7,6 +7,7 @@ import 'package:gap/gap.dart';
 
 // 🌎 Project imports:
 import 'package:pulso_vital/config/config.dart';
+import 'package:pulso_vital/modules/dashboard/domain/dashboard_domain.dart';
 import 'package:pulso_vital/modules/dashboard/presentation/providers/dashboard_providers.dart';
 import 'package:pulso_vital/modules/shared/widgets/shared_widgets.dart';
 
@@ -100,18 +101,7 @@ class RegisteredUserView extends ConsumerWidget {
         const SliverGap(8),
 
         // A sliver list to build and display the list of vital signs records.
-        SliverList.builder(
-          itemCount: vitalSignsRecords.vitalSignsEntity.length,
-          itemBuilder: (context, index) {
-            final vitalSignRecord = vitalSignsRecords.vitalSignsEntity[index];
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: VitalSignsRecordsWidget(
-                vitalSignsEntity: vitalSignRecord,
-              ),
-            );
-          },
-        ),
+        const _AnimatedVitalSignsList(),
 
         const SliverGap(16),
       ],
@@ -121,13 +111,138 @@ class RegisteredUserView extends ConsumerWidget {
   // Create a space compatible with CustomScrollView and thus render any other widget that is not a sliver
   SliverToBoxAdapter _boxWidget(Widget child) {
     return SliverToBoxAdapter(
-        child: SizedBox(
-          width: double.infinity,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: child
-          ),
+      child: SizedBox(
+        width: double.infinity,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: child,
         ),
-      );
+      ),
+    );
+  }
+}
+
+/// Custom widget that handles animations for the list of vital signs.
+///
+/// This widget encapsulates a `SliverAnimatedList` and automatically handles the
+/// animations for inserting and removing items. It maintains its own
+/// internal state synchronized with the Riverpod provider to ensure
+/// smooth and consistent animations.
+class _AnimatedVitalSignsList extends ConsumerStatefulWidget {
+  /// Create an instance of [_AnimatedVitalSignsList].
+  const _AnimatedVitalSignsList();
+
+  @override
+  ConsumerState<_AnimatedVitalSignsList> createState() => _AnimatedVitalSignsListState();
+}
+
+/// Status of the [_AnimatedVitalSignsList] widget.
+///
+/// Handles animation logic, synchronization with the data provider,
+/// and operations for inserting/deleting items in the animated list.
+class _AnimatedVitalSignsListState extends ConsumerState<_AnimatedVitalSignsList> {
+  /// Global key to control the state of the [SliverAnimatedList].
+  final GlobalKey<SliverAnimatedListState> _listKey = GlobalKey<SliverAnimatedListState>();
+
+  /// Local list that maintains the current state of the elements.
+  /// It synchronizes with the data provider but allows direct control
+  /// over animations.
+  List<VitalSignsEntity> _localList = [];
+
+  /// Flag indicating whether the list has been initialized.
+  /// Prevents unnecessary animations during the first data load.
+  bool _isInitialized = false;
+
+  @override
+  Widget build(BuildContext context) {
+    
+    final vitalSignsRecords = ref.watch(vitalSignsRecordProvider);
+    
+    // Synchronize the local list with the provider's data
+    _syncWithProvider(vitalSignsRecords.vitalSignsEntity);
+    
+    return SliverAnimatedList(
+      key: _listKey,
+      initialItemCount: _localList.length,
+      itemBuilder: (context, index, animation) {
+        if (index >= _localList.length) return const SizedBox.shrink();
+        
+        final vitalSignRecord = _localList[index];
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: VitalSignsRecordsWidget(
+            vitalSignsEntity: vitalSignRecord,
+            animation: animation,
+            onDelete: () => _deleteItem(index),
+          ),
+        );
+      },
+    );
+  }
+
+  /// Synchronizes the local list with the provider's data.
+  ///
+  /// This method automatically detects changes in the provider's data list
+  /// and applies the corresponding animations (insertion or deletion).
+  /// 
+  /// [newList] - The new data list from the provider.
+  void _syncWithProvider(List<VitalSignsEntity> newList) {
+    if (!_isInitialized) {
+      // First load - initialize without animation
+      _localList = List.from(newList);
+      _isInitialized = true;
+      return;
+    }
+
+    // Detect new elements (inserted at the beginning)
+    if (newList.length > _localList.length) {
+      final newItems = newList.take(newList.length - _localList.length).toList();
+      for (int i = 0; i < newItems.length; i++) {
+        _localList.insert(i, newItems[i]);
+        _listKey.currentState?.insertItem(
+          i, 
+          duration: const Duration(milliseconds: 500)
+        );
+      }
+    }
+    
+    // Detect deleted elements
+    else if (newList.length < _localList.length) {
+      // In this case, the element has already been removed with animation.
+      // We just need to synchronize the local list.
+      _localList = List.from(newList);
+    }
+  }
+
+  /// Deletes an item from the list with animation.
+  ///
+  /// This method handles the entire removal process:
+  /// 1. Runs the removal animation
+  /// 2. Immediately updates the local list
+  /// 3. Calls the notifier method to remove from the database
+  ///
+  /// [index] - The index of the item to be removed from the local list.
+  void _deleteItem(int index) async {
+    if (index >= _localList.length) return;
+    
+    final vitalSignRecord = _localList[index];
+    
+    // Animate removal with vertical shrink effect
+    _listKey.currentState?.removeItem(index, (context, animation) => Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: VitalSignsRecordsWidget(
+        vitalSignsEntity: vitalSignRecord,
+        animation: animation,
+        onDelete: () {}, // Empty Callback during animation
+      )),
+      duration: const Duration(milliseconds: 500),
+    );
+
+    // Update local list immediately
+    _localList.removeAt(index);
+
+    // Call the notifier method
+    await ref.read(vitalSignsRecordProvider.notifier)
+        .deleteVitalSigns(vitalSignRecord.isarId);
   }
 }

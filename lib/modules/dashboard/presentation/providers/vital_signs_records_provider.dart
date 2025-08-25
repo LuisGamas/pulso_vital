@@ -120,28 +120,37 @@ class ViatlSignsRecordsNotifier extends StateNotifier<VitalSignsRecordsState> {
     }
   }
 
+
   /// Deletes a vital signs record by its ID.
   ///
   /// This method uses the repository to delete a record, updates the state
   /// by removing the deleted record from the list, and provides a success
   /// message. If the deletion fails, it updates the state with an error.
-  Future<void> deleteVitalSigns(Id vitalSignId) async {
+  Future<bool> deleteVitalSigns(Id vitalSignId) async {
     try {
-      state = state.copyWith(isLoading: true);
-      final success = await repositories.deleteVitalSigns(vitalSignId);
-      if (success) {
-        final updatedList = await repositories.getVitalSignsRecords();
+      final vitalSignsRecords = state.vitalSignsEntity;
+      final index = vitalSignsRecords.indexWhere((record) => record.isarId == vitalSignId);
+
+      if (index != -1) {
+        final success = await repositories.deleteVitalSigns(vitalSignId);
         
-        state = state.copyWith(
-          isLoading: false,
-          vitalSignsEntity: updatedList,
-          message: 'Vital signs record successfully deleted!',
-        );
-      } else {
-        errorFunction('Error deleting vital signs record');
+        if (success) {
+          final updatedList = List<VitalSignsEntity>.from(vitalSignsRecords)
+            ..removeAt(index);
+          state = state.copyWith(
+            vitalSignsEntity: updatedList,
+            message: 'Vital signs record successfully deleted!',
+          );
+          return true;
+        } else {
+          errorFunction('Error deleting vital signs record');
+          return false;
+        }
       }
+      return false;
     } catch (e) {
       errorFunction('Error deleting vital signs record');
+      return false;
     }
   }
 

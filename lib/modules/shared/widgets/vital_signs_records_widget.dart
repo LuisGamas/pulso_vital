@@ -7,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // 🌎 Project imports:
 import 'package:pulso_vital/config/config.dart';
 import 'package:pulso_vital/modules/dashboard/domain/dashboard_domain.dart';
-import 'package:pulso_vital/modules/dashboard/presentation/providers/dashboard_providers.dart';
 import 'package:pulso_vital/modules/shared/utils/shared_utils.dart';
 
 /// A widget to display a single vital signs record in a structured format.
@@ -18,11 +17,15 @@ import 'package:pulso_vital/modules/shared/utils/shared_utils.dart';
 class VitalSignsRecordsWidget extends ConsumerWidget {
   /// The entity containing the user's vital signs data.
   final VitalSignsEntity vitalSignsEntity;
+  final Animation<double> animation;
+  final VoidCallback onDelete;
 
   /// Creates a [VitalSignsRecordsWidget] instance.
   const VitalSignsRecordsWidget({
     super.key,
     required this.vitalSignsEntity,
+    required this.animation,
+    required this.onDelete,
   });
 
   @override
@@ -31,83 +34,86 @@ class VitalSignsRecordsWidget extends ConsumerWidget {
     final textStyles = Theme.of(context).textTheme;
 
     // A Card widget to visually encapsulate the vital signs record.
-    return Card(
-      color: colors.surfaceContainer,
-      clipBehavior: Clip.hardEdge,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                // Displays the formatted date of the record.
-                Text(
-                  AppHelpers.getFormattedDate(vitalSignsEntity.createdAt),
-                  style: textStyles.titleSmall,
-                ),
-                // Displays the formatted time of the record.
-                Text(
-                  AppHelpers.getFormattedTime(vitalSignsEntity.createdAt),
-                  style: textStyles.bodySmall,
-                ),
-                // Botón para eliminar el registro o tarjeta
-                Material(
-                  color: colors.surfaceContainer,
-                  borderRadius: BorderRadius.circular(12),
-                  child: InkWell(
+    return SizeTransition(
+      sizeFactor: animation,
+      child: Card(
+        color: colors.surfaceContainer,
+        clipBehavior: Clip.hardEdge,
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  // Displays the formatted date of the record.
+                  Text(
+                    AppHelpers.getFormattedDate(vitalSignsEntity.createdAt),
+                    style: textStyles.titleSmall,
+                  ),
+                  // Displays the formatted time of the record.
+                  Text(
+                    AppHelpers.getFormattedTime(vitalSignsEntity.createdAt),
+                    style: textStyles.bodySmall,
+                  ),
+                  // Botón para eliminar el registro o tarjeta
+                  Material(
+                    color: colors.surfaceContainer,
                     borderRadius: BorderRadius.circular(12),
-                    splashColor: colors.errorContainer,
-                    child: SizedBox(
-                      height: 36,
-                      width: 36,
-                      child: Icon(
-                        RippleIcons.trashOutline,
-                        color: colors.error,
+                    child: InkWell(
+                      onTap: onDelete,
+                      borderRadius: BorderRadius.circular(12),
+                      splashColor: colors.errorContainer,
+                      child: SizedBox(
+                        height: 36,
+                        width: 36,
+                        child: Icon(
+                          RippleIcons.trashOutline,
+                          color: colors.error,
+                        ),
                       ),
-                    ),
-                    onTap: () => ref.read(vitalSignsRecordProvider.notifier).deleteVitalSigns(vitalSignsEntity.isarId),
-                  )
-                ),
-              ],
-            ),
-            // A divider to separate the date/time from the vital signs data.
-            Divider(
-              color: colors.outlineVariant,
-              // The `radius` property doesn't exist on `Divider`. This line should be changed to use `indent` and `endIndent`.
-              // For example: `indent: 10, endIndent: 10`
-            ),
-            // A row to display the vital signs records side-by-side.
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Widget for displaying blood pressure.
-                _SignRecord(
-                  signName: 'Presión',
-                  signRecord: '${vitalSignsEntity.bpSys}/${vitalSignsEntity.bpDia}',
-                  signSub: 'mmHg',
-                ),
-                // Widget for displaying heart rate.
-                _SignRecord(
-                  signName: 'Ritmo',
-                  signRecord: '${vitalSignsEntity.heartRate}',
-                  signSub: 'bpm',
-                ),
-                // Widget for displaying temperature.
-                _SignRecord(
-                  signName: 'Temp.',
-                  signRecord: '${vitalSignsEntity.tempC}',
-                  signSub: '°C',
-                ),
-              ],
-            ),
-          ],
+                    )
+                  ),
+                ],
+              ),
+              // A divider to separate the date/time from the vital signs data.
+              Divider(
+                color: colors.outlineVariant,
+                // The `radius` property doesn't exist on `Divider`. This line should be changed to use `indent` and `endIndent`.
+                // For example: `indent: 10, endIndent: 10`
+              ),
+              // A row to display the vital signs records side-by-side.
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Widget for displaying blood pressure.
+                  _SignRecord(
+                    signName: 'Presión',
+                    signRecord: '${vitalSignsEntity.bpSys}/${vitalSignsEntity.bpDia}',
+                    signSub: 'mmHg',
+                  ),
+                  // Widget for displaying heart rate.
+                  _SignRecord(
+                    signName: 'Ritmo',
+                    signRecord: '${vitalSignsEntity.heartRate}',
+                    signSub: 'bpm',
+                  ),
+                  // Widget for displaying temperature.
+                  _SignRecord(
+                    signName: 'Temp.',
+                    signRecord: '${vitalSignsEntity.tempC}',
+                    signSub: '°C',
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
